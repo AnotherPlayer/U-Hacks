@@ -40,7 +40,7 @@ Diseñamos una arquitectura donde el usuario interactúa con una interfaz web o 
 
 * **Definición del Enfoque de IA:** Ajustar la arquitectura para aclarar que MediByte **no se entrena desde cero**, sino que realiza consultas dinámicas (RAG) sobre una base de conocimiento validada para evitar alucinaciones.
 * **Traducción de Lenguaje Técnico:** Transformar conceptos complejos de índice glucémico y conteo de carbohidratos en mensajes simples, empáticos y digeribles.
-* **Ética y Responsabilidad:** Cuidar rigurosamente que las recomendaciones mantengan un tono de **orientación educativa** y nunca suenen como un diagnóstico médico.
+* **Ética y Responsabilidad:** Cuidar rigurosamente que las recomendaciones cumplan con la certeza y ética que debe tener una aplicación de salud, además que nos sustituya un diagnóstico de infomación medica.
 * **Gestión de Flujos:** Diseñar una lógica conversacional que no solo responda preguntas, sino que guarde información y detecte patrones de consumo de forma lógica.
 
 ---
