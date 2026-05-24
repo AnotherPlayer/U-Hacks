@@ -10,7 +10,7 @@
     <style>
         body {
             background-color: #0f172a;
-            color: white;
+            color: #f1f5f9;
         }
 
         .navbar-custom {
@@ -31,15 +31,19 @@
         .form-select {
             background-color: #334155;
             border: none;
-            color: white;
+            color: #f1f5f9;
         }
 
         .form-control:focus,
         .form-select:focus {
             background-color: #334155;
-            color: white;
+            color: #f1f5f9;
             box-shadow: none;
             border: 1px solid #3b82f6;
+        }
+
+        .form-control::placeholder {
+            color: #94a3b8;
         }
 
         .btn-primary-custom {
@@ -59,6 +63,7 @@
             border: none;
             padding: 8px 16px;
             border-radius: 10px;
+            color: white;
         }
 
         .btn-danger-custom:hover {
@@ -80,21 +85,45 @@
             font-weight: bold;
         }
 
+        /* Estilos para la tabla del historial */
         .table-custom {
             background-color: #1e293b;
             border-radius: 15px;
             overflow: hidden;
+            width: 100%;
+            border-collapse: collapse;
         }
 
         .table-custom th {
             background-color: #334155;
-            color: white;
+            color: #f1f5f9;
             border: none;
+            font-weight: 600;
+            padding: 12px 15px;
+            font-size: 14px;
         }
 
         .table-custom td {
-            color: white;
-            border-color: #334155;
+            padding: 10px 15px;
+            font-size: 13px;
+            border-bottom: 1px solid #334155;
+            /* Color AZUL OSCURO por defecto */
+            color: #1e3a5f;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        /* Cuando el mouse pasa sobre la fila, el texto cambia a GRIS BLANCO */
+        .table-custom tr:hover td {
+            color: #e2e8f0 !important;
+            background-color: #2d3a4e;
+        }
+
+        /* Los spans de riesgo mantienen su color pero también cambian con hover */
+        .table-custom tr:hover td .riesgo-alto,
+        .table-custom tr:hover td .riesgo-medio,
+        .table-custom tr:hover td .riesgo-bajo {
+            filter: brightness(1.2);
         }
 
         .avatar {
@@ -106,6 +135,152 @@
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
+        }
+
+        /* Estilos para la ventana de diálogo del chat */
+        .chat-dialog {
+            background-color: #1e293b;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 20px;
+            font-weight: bold;
+            font-size: 18px;
+            color: white;
+        }
+
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: #1e293b;
+        }
+
+        .message {
+            display: flex;
+            flex-direction: column;
+            max-width: 85%;
+        }
+
+        .message.user {
+            align-self: flex-end;
+        }
+
+        .message.bot {
+            align-self: flex-start;
+        }
+
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        .message.user .message-bubble {
+            background-color: #3b82f6;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.bot .message-bubble {
+            background-color: #334155;
+            color: #e2e8f0;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 10px;
+            color: #94a3b8;
+            margin-top: 4px;
+            margin-left: 8px;
+            margin-right: 8px;
+        }
+
+        .message.user .message-time {
+            text-align: right;
+        }
+
+        .chat-input-area {
+            padding: 15px 20px;
+            border-top: 1px solid #334155;
+            background-color: #1e293b;
+        }
+
+        .input-group-custom {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-group-custom input {
+            flex: 1;
+            background-color: #334155;
+            border: none;
+            color: #f1f5f9;
+            padding: 12px 16px;
+            border-radius: 25px;
+            outline: none;
+        }
+
+        .input-group-custom input::placeholder {
+            color: #94a3b8;
+        }
+
+        .input-group-custom button {
+            background-color: #3b82f6;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .input-group-custom button:hover {
+            background-color: #2563eb;
+        }
+
+        .recomendacion-card {
+            background-color: #0f172a;
+            border-left: 4px solid #3b82f6;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #e2e8f0;
+        }
+
+        /* Scroll personalizado */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #0f172a;
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 3px;
+        }
+
+        h4,
+        h5 {
+            color: #f1f5f9;
+        }
+
+        .text-secondary {
+            color: #94a3b8 !important;
         }
     </style>
 </head>
@@ -130,56 +305,31 @@
     </nav>
 
     <div class="container mt-4">
-        <!-- Formulario para analizar alimento -->
-        <div class="card-custom">
-            <h4 class="mb-3">🍽️ ¿Qué comiste hoy?</h4>
-            <form id="foodForm">
-                <div class="row">
-                    <div class="col-md-8 mb-3">
-                        <input type="text" id="foodInput" name="food" class="form-control" 
-                               placeholder="Ej. Manzana, Pollo a la plancha, Ensalada..." required>
+        <!-- Ventana de diálogo del chat -->
+        <div class="chat-dialog">
+            <div class="chat-header">
+                💬 Asistente Nutrimental - Diabetes Tipo 2
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot">
+                    <div class="message-bubble">
+                        👋 ¡Hola! Soy tu asistente nutrimental.<br>
+                        Escribe qué alimento consumiste y te daré la recomendación.
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <button type="submit" id="btnAnalizar" class="btn btn-primary-custom w-100">
-                            Analizar Alimento
-                        </button>
-                    </div>
+                    <span class="message-time"></span>
                 </div>
-            </form>
-        </div>
-
-        <!-- Resultado del análisis -->
-        {% if analysis %}
-        <div class="card-custom" id="analysisResult">
-            <h4 class="mb-3">📊 Análisis Nutricional</h4>
-            <div class="row">
-                <div class="col-md-6">
-                    <p><strong>Alimento:</strong> {{ alimento_analizado }}</p>
-                    <p><strong>Carbohidratos:</strong> {{ analysis.carbohidratos }} g</p>
-                    <p><strong>Proteínas:</strong> {{ analysis.proteinas }} g</p>
-                    <p><strong>Grasas:</strong> {{ analysis.grasas }} g</p>
-                    <p><strong>Sodio:</strong> {{ analysis.sodio }} mg</p>
-                </div>
-                <div class="col-md-6">
-                    <p><strong>Riesgo:</strong> 
-                        <span class="
-                            {% if analysis.riesgo == 'Alto' %}riesgo-alto
-                            {% elif analysis.riesgo == 'Medio' %}riesgo-medio
-                            {% else %}riesgo-bajo{% endif %}
-                        ">
-                            {{ analysis.riesgo }}
-                        </span>
-                    </p>
-                    <p><strong>Recomendación:</strong> {{ analysis.recomendacion }}</p>
+            </div>
+            <div class="chat-input-area">
+                <div class="input-group-custom">
+                    <input type="text" id="foodInput" placeholder="Ej. Manzana, Pollo, Pizza..." autocomplete="off">
+                    <button id="btnEnviar">📤 Enviar</button>
                 </div>
             </div>
         </div>
-        {% endif %}
 
         <!-- Historial de consumos -->
-        <div class="card-custom">
+        <div class="card-custom mt-4">
             <h4 class="mb-3">📜 Historial de Alimentos</h4>
-            {% if history %}
             <div class="table-responsive">
                 <table class="table table-custom">
                     <thead>
@@ -193,7 +343,7 @@
                             <th>Riesgo</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="historialBody">
                         {% for item in history %}
                         <tr>
                             <td>{{ item.fecha_consumo or item.fecha }}</td>
@@ -216,25 +366,165 @@
                     </tbody>
                 </table>
             </div>
-            {% else %}
-            <p class="text-center text-secondary">No hay alimentos registrados aún.</p>
-            {% endif %}
         </div>
     </div>
 
     <script>
-        document.getElementById("foodForm").addEventListener("submit", async function(e) {
-            e.preventDefault();
+        const chatMessages = document.getElementById('chatMessages');
+        const foodInput = document.getElementById('foodInput');
+        const btnEnviar = document.getElementById('btnEnviar');
+        const historialBody = document.getElementById('historialBody');
+
+        // Guardar referencia al mensaje de bienvenida
+        let welcomeMessage = chatMessages.querySelector('.message.bot');
+        let ultimoMensajeUsuario = null;
+        let ultimoMensajeBot = null;
+
+        function getCurrentTime() {
+            const now = new Date();
+            return now.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Actualizar hora del mensaje de bienvenida
+        if (welcomeMessage) {
+            welcomeMessage.querySelector('.message-time').textContent = getCurrentTime();
+        }
+
+        // Función para limpiar mensajes anteriores
+        function limpiarMensajesAnteriores() {
+            if (ultimoMensajeUsuario) {
+                ultimoMensajeUsuario.remove();
+                ultimoMensajeUsuario = null;
+            }
+            if (ultimoMensajeBot) {
+                ultimoMensajeBot.remove();
+                ultimoMensajeBot = null;
+            }
+        }
+
+        // Función para mostrar mensaje del usuario
+        function addUserMessage(text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user';
+            messageDiv.innerHTML = `
+                <div class="message-bubble">🍽️ ${text}</div>
+                <span class="message-time">${getCurrentTime()}</span>
+            `;
+            chatMessages.appendChild(messageDiv);
+            ultimoMensajeUsuario = messageDiv;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Función para mostrar solo la recomendación
+        function updateBotMessage(analysis, alimento) {
+            let riesgoEmoji = '';
+            let riesgoClass = '';
             
-            const foodInput = document.getElementById("foodInput");
+            if (analysis.riesgo === 'Alto') {
+                riesgoEmoji = '🔴';
+                riesgoClass = 'riesgo-alto';
+            } else if (analysis.riesgo === 'Medio') {
+                riesgoEmoji = '🟠';
+                riesgoClass = 'riesgo-medio';
+            } else {
+                riesgoEmoji = '🟢';
+                riesgoClass = 'riesgo-bajo';
+            }
+            
+            const mensajeRespuesta = `
+                <strong>${riesgoEmoji} Riesgo: <span class="${riesgoClass}">${analysis.riesgo}</span></strong><br><br>
+                <div class="recomendacion-card">
+                    💡 <strong>Recomendación:</strong><br>
+                    ${analysis.recomendacion}
+                </div>
+            `;
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot';
+            messageDiv.innerHTML = `
+                <div class="message-bubble">${mensajeRespuesta}</div>
+                <span class="message-time">${getCurrentTime()}</span>
+            `;
+            chatMessages.appendChild(messageDiv);
+            ultimoMensajeBot = messageDiv;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Función para mostrar mensaje de carga
+        function showLoadingMessage(alimento) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot';
+            messageDiv.innerHTML = `
+                <div class="message-bubble">⏳ Analizando ${alimento}...</div>
+                <span class="message-time">${getCurrentTime()}</span>
+            `;
+            chatMessages.appendChild(messageDiv);
+            ultimoMensajeBot = messageDiv;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Función para agregar una fila al historial (sin estilos inline)
+        function agregarAlHistorial(item) {
+            const row = document.createElement('tr');
+            
+            let riesgoClass = '';
+            if (item.nivel_riesgo === 'Alto') riesgoClass = 'riesgo-alto';
+            else if (item.nivel_riesgo === 'Medio') riesgoClass = 'riesgo-medio';
+            else riesgoClass = 'riesgo-bajo';
+            
+            // Crear las celdas SIN estilos inline para que el CSS las controle
+            const celdaFecha = document.createElement('td');
+            celdaFecha.textContent = item.fecha;
+            
+            const celdaNombre = document.createElement('td');
+            celdaNombre.textContent = item.nombre;
+            
+            const celdaCarbs = document.createElement('td');
+            celdaCarbs.textContent = `${item.carbohidratos_porcion} g`;
+            
+            const celdaProteinas = document.createElement('td');
+            celdaProteinas.textContent = `${item.proteinas_porcion} g`;
+            
+            const celdaGrasas = document.createElement('td');
+            celdaGrasas.textContent = `${item.grasas_porcion} g`;
+            
+            const celdaSodio = document.createElement('td');
+            celdaSodio.textContent = `${item.sodio_porcion} mg`;
+            
+            const celdaRiesgo = document.createElement('td');
+            const spanRiesgo = document.createElement('span');
+            spanRiesgo.className = riesgoClass;
+            spanRiesgo.textContent = item.nivel_riesgo;
+            celdaRiesgo.appendChild(spanRiesgo);
+            
+            row.appendChild(celdaFecha);
+            row.appendChild(celdaNombre);
+            row.appendChild(celdaCarbs);
+            row.appendChild(celdaProteinas);
+            row.appendChild(celdaGrasas);
+            row.appendChild(celdaSodio);
+            row.appendChild(celdaRiesgo);
+            
+            // Insertar al principio del historial
+            if (historialBody.firstChild) {
+                historialBody.insertBefore(row, historialBody.firstChild);
+            } else {
+                historialBody.appendChild(row);
+            }
+        }
+
+        // Función principal para enviar el alimento
+        async function enviarAlimento() {
             const food = foodInput.value.trim();
             
             if (!food) {
                 Swal.fire({
-                    icon: "error",
-                    title: "Error",
-                    text: "Por favor ingresa un alimento para analizar",
-                    confirmButtonText: "Aceptar"
+                    icon: "warning",
+                    title: "Campo vacío",
+                    text: "Escribe qué alimento consumiste",
+                    confirmButtonText: "Aceptar",
+                    background: "#1e293b",
+                    color: "#fff"
                 });
                 return;
             }
@@ -243,21 +533,25 @@
                 Swal.fire({
                     icon: "error",
                     title: "Error",
-                    text: "El nombre del alimento no debe superar 100 caracteres",
-                    confirmButtonText: "Aceptar"
+                    text: "El nombre no debe superar 100 caracteres",
+                    confirmButtonText: "Corregir",
+                    background: "#1e293b",
+                    color: "#fff"
                 });
                 return;
             }
             
-            // Mostrar loading
-            Swal.fire({
-                title: "Analizando...",
-                text: "Estamos analizando el alimento con IA",
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
+            // LIMPIAR mensajes anteriores
+            limpiarMensajesAnteriores();
+            
+            // Mostrar mensaje del usuario
+            addUserMessage(food);
+            
+            // Limpiar input
+            foodInput.value = '';
+            
+            // Mostrar mensaje de "analizando"
+            showLoadingMessage(food);
             
             try {
                 const response = await fetch("/api/analyze", {
@@ -271,30 +565,64 @@
                 const data = await response.json();
                 
                 if (data.success) {
+                    // Eliminar mensaje de carga
+                    if (ultimoMensajeBot) {
+                        ultimoMensajeBot.remove();
+                        ultimoMensajeBot = null;
+                    }
+                    updateBotMessage(data.analysis, food);
+                    
+                    // Agregar al historial
+                    const today = new Date();
+                    const fechaStr = today.toISOString().split('T')[0];
+                    
+                    const nuevoItem = {
+                        fecha: fechaStr,
+                        nombre: food,
+                        carbohidratos_porcion: data.analysis.carbohidratos,
+                        proteinas_porcion: data.analysis.proteinas,
+                        grasas_porcion: data.analysis.grasas,
+                        sodio_porcion: data.analysis.sodio,
+                        nivel_riesgo: data.analysis.riesgo
+                    };
+                    
+                    agregarAlHistorial(nuevoItem);
+                    
                     Swal.fire({
                         icon: "success",
-                        title: "¡Análisis completado!",
-                        text: "El alimento ha sido registrado correctamente",
-                        confirmButtonText: "Aceptar"
-                    }).then(() => {
-                        location.reload();
+                        title: "¡Registrado!",
+                        text: "El alimento se guardó en tu historial",
+                        confirmButtonText: "Aceptar",
+                        background: "#1e293b",
+                        color: "#fff",
+                        timer: 1500,
+                        showConfirmButton: false
                     });
                 } else {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Error",
-                        text: data.message,
-                        confirmButtonText: "Intentar de nuevo"
-                    });
+                    if (ultimoMensajeBot) {
+                        ultimoMensajeBot.querySelector('.message-bubble').innerHTML = `❌ ${data.message}`;
+                    }
                 }
             } catch (error) {
+                if (ultimoMensajeBot) {
+                    ultimoMensajeBot.querySelector('.message-bubble').innerHTML = `❌ Error de conexión. Intenta de nuevo.`;
+                }
+                
                 Swal.fire({
                     icon: "error",
-                    title: "Error de conexión",
+                    title: "Error",
                     text: "No se pudo conectar con el servidor",
-                    confirmButtonText: "Intentar de nuevo"
+                    confirmButtonText: "Intentar de nuevo",
+                    background: "#1e293b",
+                    color: "#fff"
                 });
             }
+        }
+
+        // Eventos
+        btnEnviar.addEventListener('click', enviarAlimento);
+        foodInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') enviarAlimento();
         });
     </script>
 </body>

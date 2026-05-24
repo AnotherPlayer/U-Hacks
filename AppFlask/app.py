@@ -4,31 +4,74 @@ from functools import wraps
 import uuid
 import re
 import json
-import requests # Sustituimos la librería de Google por requests para Ollama
-
-app = Flask(__name__)
-app.secret_key = "hackathon"
-
-# ======================================
-# CONFIGURACIÓN DE OLLAMA (LOCAL)
-# ======================================
-
-OLLAMA_URL = "http://localhost:11434/api/generate"
-OLLAMA_MODEL = "enfermera-virtual" # El nombre que le diste a tu Modelfile
+import random
+from datetime import datetime
+import google.generativeai as genai
 
 # ======================================
 # CONEXIÓN A MYSQL
 # ======================================
+app = Flask(__name__)
+app.secret_key = "hackathon"
+
 
 db = mysql.connector.connect(
     host="127.0.0.1",
-    user="another",
-    password="Nero_3310",  # Tu contraseña de MySQL
+    user="root",
+    password="",  # Tu contraseña de MySQL
     database="asistente_nutrimental"
 )
 
 cursor = db.cursor(dictionary=True)
 
+
+# API
+genai.configure(api_key="AIzaSyC7ml7ZshclHYm0pYcmi5VcFF9of9K627o")
+
+model = genai.GenerativeModel(
+    "gemini-2.5-flash",
+    generation_config={
+        "temperature": 0.2
+    }
+)
+
+# Prompt
+SYSTEM_PROMPT = """
+Eres un asistente nutrimental especializado
+en diabetes tipo 2. 
+
+Analiza alimentos y responde SIEMPRE
+en JSON válido con el formato predeterminado. 
+
+
+si no es un alimento valido consumible y no tóxico, no generes respuesta
+Para la recomendacion hazlo en forma de string y explica si es recomendable o no su consumo, 
+basado en el índice glucémico, ademas recomienda la cantidad/porción adecuada de forma textual, 
+con tono profesional y accesible como un profesional de salud.
+
+Cuando el modelo haga afirmaciones factuales importantes o numéricas, debe declarar su nivel de 
+confianza y, siempre que sea posible, citar fuentes verificables (guías oficiales, instituciones 
+reconocidas o estudios); si no puede citar una fuente confiable, debe admitir la incertidumbre
+ y sugerir pasos concretos para verificar la información. 
+
+ En caso de que se sugieran conductas de riesgo, ante cualquier solicitud que pueda afectar la salud, 
+ la seguridad o el bienestar, produce recomendacion de "No No puedo ayudar con esa solicitud." Consulta a un profesional de la salud o llama a emergencias si es urgente., cero riesgo, 
+
+Formato:
+
+{
+  "accion": "registrar",
+  "alimento": "",
+  "carbohidratos": 0,
+  "proteinas": 0,
+  "grasas": 0,
+  "sodio": 0,
+  "riesgo": ""
+  "recomendacion": "comer o no comer"
+}
+
+NO uses markdown.
+"""
 
 # ======================================
 # DECORADOR PARA SESIÓN
@@ -41,6 +84,47 @@ def login_required(f):
             return redirect("/")
         return f(*args, **kwargs)
     return decorated_function
+
+
+# ======================================
+# BASE DE DATOS DE RESPUESTAS PREDEFINIDAS
+# ======================================
+
+
+def analizar_alimento(nombre_alimento, perfil_paciente):
+    """
+    Analiza un alimento usando respuestas predefinidas o respuestas largas de LLM simuladas
+    """
+    prompt = SYSTEM_PROMPT + nombre_alimento
+    response = model.generate_content(prompt)
+
+    try: 
+        text = response.text.strip()
+
+        text = text.replace(
+            "```json", ""
+        ).replace("```", "")
+
+        respuesta = json.loads(text)
+
+                
+        return {
+            "success": True,
+            "analysis": {
+                "carbohidratos": respuesta["carbohidratos"],
+                "proteinas": respuesta["proteinas"],
+                "grasas": respuesta["grasas"],
+                "sodio": respuesta["sodio"],
+                "riesgo": respuesta["riesgo"],
+                "recomendacion": respuesta["recomendacion"]
+            }
+        }
+    except: 
+        return {
+            "success": False,
+            "message": f"Error al procesar la respuesta de IA, realmente es comida? puedes intentar replantearla: {str(e)}"
+        }
+
 
 
 # ======================================
@@ -104,6 +188,29 @@ def register():
     email = request.form.get("email")
     password = request.form.get("password")
     
+    # Validar contraseña mínima
+    if len(password) < 8:
+        return '''
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        </head>
+        <body>
+            <script>
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "La contraseña debe tener al menos 8 caracteres",
+                    confirmButtonText: "Corregir"
+                }).then(function() {
+                    window.location.href = "/";
+                });
+            </script>
+        </body>
+        </html>
+        '''
+    
     # Verificar si el email ya existe
     check_query = "SELECT id FROM usuarios WHERE email = %s"
     cursor.execute(check_query, (email,))
@@ -162,7 +269,7 @@ def register():
 
 
 # ======================================
-# PERFIL - CON VALIDACIONES
+# PERFIL
 # ======================================
 
 @app.route("/profile", methods=["GET", "POST"])
@@ -198,12 +305,9 @@ def api_save_profile():
     altura_cm = data.get("altura_cm")
     notas = data.get("notas")
     
-    # ======================================
-    # VALIDACIONES
-    # ======================================
+    # Validaciones
     errores = []
     
-    # Validar nombre
     if not nombre:
         errores.append("El nombre del paciente no puede estar vacío.")
     elif len(nombre) > 100:
@@ -211,7 +315,6 @@ def api_save_profile():
     elif not re.match(r'^[a-zA-ZÁÉÍÓÚáéíóúÑñ\s]+$', nombre):
         errores.append("El nombre solo debe contener letras y espacios.")
     
-    # Validar edad
     if not edad:
         errores.append("La edad no puede estar vacía.")
     else:
@@ -224,7 +327,6 @@ def api_save_profile():
         except ValueError:
             errores.append("La edad debe ser un número entero.")
     
-    # Validar peso
     if not peso_kg:
         errores.append("El peso no puede estar vacío.")
     else:
@@ -234,12 +336,9 @@ def api_save_profile():
                 errores.append("El peso debe ser mayor que cero.")
             elif peso_num > 999.99:
                 errores.append("El peso no debe superar 999.99 kg.")
-            elif not re.match(r'^\d{1,3}(\.\d{1,2})?$', peso_kg):
-                errores.append("El peso debe tener máximo 3 dígitos enteros y 2 decimales.")
         except ValueError:
             errores.append("El peso debe ser un número válido.")
     
-    # Validar altura
     if not altura_cm:
         errores.append("La altura no puede estar vacía.")
     else:
@@ -252,7 +351,6 @@ def api_save_profile():
         except ValueError:
             errores.append("La altura debe ser un número entero.")
     
-    # Validar notas
     if notas and len(notas) > 500:
         errores.append("Las notas no deben superar 500 caracteres.")
     
@@ -343,11 +441,11 @@ def dashboard():
     cursor.execute(history_query, (session["paciente_id"],))
     history = cursor.fetchall()
     
-    return render_template("dashboard.html", profile=profile, history=history, analysis=None, alimento_analizado=None)
+    return render_template("dashboard.html", profile=profile, history=history)
 
 
 # ======================================
-# API PARA ANALIZAR ALIMENTO CON OLLAMA
+# API PARA ANALIZAR ALIMENTO CON GEMINI 3.1 PRO
 # ======================================
 
 @app.route("/api/analyze", methods=["POST"])
@@ -383,59 +481,24 @@ def analyze_food():
     cursor.execute(profile_query, (session["paciente_id"],))
     profile = cursor.fetchone()
     
-    # Contexto del paciente para Ollama
-    patient_context = f"""
-    Paciente con DIABETES TIPO 2:
-    - Nombre: {profile['nombre']}
-    - Edad: {profile['edad']} años
-    - Peso: {profile['peso_kg']} kg
-    - Altura: {profile['altura_cm']} cm
-    - Notas adicionales: {profile['notas'] if profile['notas'] else 'Ninguna'}
-    """
+    if not profile:
+        return jsonify({
+            "success": False,
+            "message": "Perfil del paciente no encontrado"
+        }), 404
     
-    prompt = f"""
-    {patient_context}
+    # Analizar con Gemini
+    resultado = analizar_alimento(food, profile)
     
-    Eres un asistente nutrimental especializado en diabetes tipo 2.
+    if not resultado["success"]:
+        return jsonify({
+            "success": False,
+            "message": resultado.get("message", "Error al analizar el alimento")
+        }), 500
     
-    Analiza el siguiente alimento pensando en una porción estándar (1 taza o 100g).
-    
-    Responde SOLAMENTE con un objeto JSON válido, sin texto adicional, sin markdown.
-    
-    Formato requerido:
-    {{
-        "carbohidratos": 0,
-        "proteinas": 0,
-        "grasas": 0,
-        "sodio": 0,
-        "riesgo": "Alto/Medio/Bajo",
-        "recomendacion": "Recomendación breve para el paciente con diabetes tipo 2"
-    }}
-    
-    Alimento a analizar: {food}
-    """
+    analysis = resultado["analysis"]
     
     try:
-        # Preparamos el payload para el modelo local de Ollama
-        payload = {
-            "model": OLLAMA_MODEL,
-            "prompt": prompt,
-            "stream": False,
-            "format": "json"  # Forzamos salida JSON segura
-        }
-        
-        # Petición HTTP al servidor local
-        response = requests.post(OLLAMA_URL, json=payload)
-        response.raise_for_status()
-        
-        # Extraer el texto de la respuesta de Ollama
-        text = response.json()['response'].strip()
-        
-        # Limpiar markdown por seguridad
-        text = text.replace("```json", "").replace("```", "").strip()
-        
-        analysis = json.loads(text)
-        
         # Insertar alimento en la BD
         food_query = """
         INSERT INTO alimentos (nombre, carbohidratos_porcion, proteinas_porcion, grasas_porcion, sodio_porcion)
@@ -466,26 +529,19 @@ def analyze_food():
         ))
         db.commit()
         
+        print(f"✅ Alimento guardado exitosamente: {food}")
+        
         return jsonify({
             "success": True,
             "analysis": analysis,
             "message": "Alimento analizado y guardado correctamente"
         })
         
-    except json.JSONDecodeError as e:
-        return jsonify({
-            "success": False,
-            "message": f"Error al procesar la respuesta de IA: {str(e)}"
-        }), 500
-    except requests.exceptions.RequestException as e:
-        return jsonify({
-            "success": False,
-            "message": f"Error al conectar con el servidor local de Ollama: {str(e)}"
-        }), 500
     except Exception as e:
+        print(f"❌ Error al guardar en BD: {e}")
         return jsonify({
             "success": False,
-            "message": f"Error al analizar: {str(e)}"
+            "message": f"Error al guardar en BD: {str(e)}"
         }), 500
 
 
@@ -498,10 +554,10 @@ def logout():
     session.clear()
     return redirect("/")
 
-
 # ======================================
 # RUN
 # ======================================
 
 if __name__ == "__main__":
+    print("🚀 Iniciando servidor Flask...")
     app.run(debug=True)
