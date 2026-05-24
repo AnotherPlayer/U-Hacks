@@ -68,9 +68,18 @@ Diseñamos una arquitectura donde el usuario interactúa con una interfaz web o 
 
 ---
 
+## Como ejecutar 
+
+* **Ejecutar el siguiente comando**
+   chmod +x setup-local.sh
+   ./setup-local.sh
+
+---
+
 ## Integrantes
 
 * 👩‍💻 **María Fernanda Carmona Guerrero** — [@mophead09](https://github.com/mophead09)
 * 👩‍💻 **Fatima Cruz Mota** — [@fatimacruz21](https://github.com/fatimacruz21)
 * 👨‍💻 **Héctor David González Tetuán** — [@AnotherPlayer](https://github.com/AnotherPlayer)
 * 👨‍💻 **Jan Isaac Hurtado Rosas** — [@isaac-hurtado](https://github.com/isaac-hurtado)
+
