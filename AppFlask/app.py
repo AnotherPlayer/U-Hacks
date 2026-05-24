@@ -4,20 +4,17 @@ from functools import wraps
 import uuid
 import re
 import json
-import google.generativeai as genai
+import requests # Sustituimos la librería de Google por requests para Ollama
 
 app = Flask(__name__)
 app.secret_key = "hackathon"
 
 # ======================================
-# CONFIGURACIÓN DE GEMINI
+# CONFIGURACIÓN DE OLLAMA (LOCAL)
 # ======================================
 
-genai.configure(
-    api_key="TU_API_KEY_AQUI"  # CAMBIA ESTO POR TU API KEY REAL DE GOOGLE AI STUDIO
-)
-
-model = genai.GenerativeModel("gemini-1.5-flash")
+OLLAMA_URL = "http://localhost:11434/api/generate"
+OLLAMA_MODEL = "enfermera-virtual" # El nombre que le diste a tu Modelfile
 
 # ======================================
 # CONEXIÓN A MYSQL
@@ -25,8 +22,8 @@ model = genai.GenerativeModel("gemini-1.5-flash")
 
 db = mysql.connector.connect(
     host="127.0.0.1",
-    user="root",
-    password="",  # Tu contraseña de MySQL
+    user="another",
+    password="Nero_3310",  # Tu contraseña de MySQL
     database="asistente_nutrimental"
 )
 
@@ -350,7 +347,7 @@ def dashboard():
 
 
 # ======================================
-# API PARA ANALIZAR ALIMENTO CON GEMINI
+# API PARA ANALIZAR ALIMENTO CON OLLAMA
 # ======================================
 
 @app.route("/api/analyze", methods=["POST"])
@@ -386,7 +383,7 @@ def analyze_food():
     cursor.execute(profile_query, (session["paciente_id"],))
     profile = cursor.fetchone()
     
-    # Contexto del paciente para Gemini
+    # Contexto del paciente para Ollama
     patient_context = f"""
     Paciente con DIABETES TIPO 2:
     - Nombre: {profile['nombre']}
@@ -419,10 +416,22 @@ def analyze_food():
     """
     
     try:
-        response = model.generate_content(prompt)
-        text = response.text.strip()
+        # Preparamos el payload para el modelo local de Ollama
+        payload = {
+            "model": OLLAMA_MODEL,
+            "prompt": prompt,
+            "stream": False,
+            "format": "json"  # Forzamos salida JSON segura
+        }
         
-        # Limpiar markdown
+        # Petición HTTP al servidor local
+        response = requests.post(OLLAMA_URL, json=payload)
+        response.raise_for_status()
+        
+        # Extraer el texto de la respuesta de Ollama
+        text = response.json()['response'].strip()
+        
+        # Limpiar markdown por seguridad
         text = text.replace("```json", "").replace("```", "").strip()
         
         analysis = json.loads(text)
@@ -467,6 +476,11 @@ def analyze_food():
         return jsonify({
             "success": False,
             "message": f"Error al procesar la respuesta de IA: {str(e)}"
+        }), 500
+    except requests.exceptions.RequestException as e:
+        return jsonify({
+            "success": False,
+            "message": f"Error al conectar con el servidor local de Ollama: {str(e)}"
         }), 500
     except Exception as e:
         return jsonify({
