@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Asistente Nutrimental</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- ChartJS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f1f5f9;
+        }
+
+        .navbar-custom {
+            background-color: #1e293b;
+            padding: 15px;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .card-custom {
+            background-color: #1e293b;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-control,
+        .form-select {
+            background-color: #334155;
+            border: none;
+            color: #f1f5f9;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background-color: #334155;
+            color: #f1f5f9;
+            box-shadow: none;
+            border: 1px solid #3b82f6;
+        }
+
+        .form-control::placeholder {
+            color: #94a3b8;
+        }
+
+        .btn-primary-custom {
+            background-color: #2563eb;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: bold;
+        }
+
+        .btn-primary-custom:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-danger-custom {
+            background-color: #dc2626;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .btn-danger-custom:hover {
+            background-color: #b91c1c;
+        }
+
+        .riesgo-alto {
+            color: #ef4444;
+            font-weight: bold;
+        }
+
+        .riesgo-medio {
+            color: #f59e0b;
+            font-weight: bold;
+        }
+
+        .riesgo-bajo {
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .table-custom {
+            background-color: #1e293b;
+            border-radius: 15px;
+            overflow: hidden;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-custom th {
+            background-color: #334155;
+            color: #f1f5f9;
+            border: none;
+            font-weight: 600;
+            padding: 12px 15px;
+            font-size: 14px;
+        }
+
+        .table-custom td {
+            padding: 10px 15px;
+            font-size: 13px;
+            border-bottom: 1px solid #334155;
+            color: #334155;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .table-custom tr:hover td {
+            color: #ffffff !important;
+            background-color: #2d3a4e;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #3b82f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .chat-dialog {
+            background-color: #1e293b;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 20px;
+            font-weight: bold;
+            font-size: 18px;
+            color: white;
+        }
+
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: #1e293b;
+        }
+
+        .message {
+            display: flex;
+            flex-direction: column;
+            max-width: 85%;
+        }
+
+        .message.user {
+            align-self: flex-end;
+        }
+
+        .message.bot {
+            align-self: flex-start;
+        }
+
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            white-space: normal;
+        }
+
+        .message.user .message-bubble {
+            background-color: #3b82f6;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.bot .message-bubble {
+            background-color: #334155;
+            color: #e2e8f0;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 10px;
+            color: #94a3b8;
+            margin-top: 4px;
+            margin-left: 8px;
+            margin-right: 8px;
+        }
+
+        .message.user .message-time {
+            text-align: right;
+        }
+
+        .chat-input-area {
+            padding: 15px 20px;
+            border-top: 1px solid #334155;
+            background-color: #1e293b;
+        }
+
+        .input-group-custom {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-group-custom input {
+            flex: 1;
+            background-color: #334155;
+            border: none;
+            color: #f1f5f9;
+            padding: 12px 16px;
+            border-radius: 25px;
+            outline: none;
+        }
+
+        .input-group-custom input::placeholder {
+            color: #94a3b8;
+        }
+
+        .input-group-custom button {
+            background-color: #3b82f6;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .input-group-custom button:hover {
+            background-color: #2563eb;
+        }
+
+        .recomendacion-card {
+            background-color: #0f172a;
+            border-left: 4px solid #3b82f6;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #e2e8f0;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #0f172a;
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 3px;
+        }
+
+        h4,
+        h5 {
+            color: #f1f5f9;
+        }
+
+        .text-secondary {
+            color: #94a3b8 !important;
+        }
+
+        /* Estilos para leyendas con cuadritos de color */
+        .legend-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .legend-label {
+            color: #f1f5f9;
+        }
+
+        .legend-value {
+            color: #94a3b8;
+            font-weight: normal;
+            margin-left: 4px;
+        }
+
+        /* CONTENEDORES CON ALTURA FIJA PARA LAS GRÁFICAS */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 350px;
+        }
+
+        .macro-summary {
+            margin-top: 20px;
+        }
+
+        .trend-summary {
+            margin-top: 20px;
+        }
+        
+        canvas {
+            max-height: 100%;
+            width: 100% !important;
+        }
+
+        /* Títulos de gráficas */
+        .chart-title {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #f1f5f9;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar-custom">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="avatar">👤</div>
+                    <div>
+                        <h5 class="mb-0">{{ profile.nombre if profile else 'Paciente' }}</h5>
+                        <small class="text-secondary">{{ profile.edad if profile else '?' }} años | 
+                               {{ profile.peso_kg if profile else '?' }} kg | 
+                               {{ profile.altura_cm if profile else '?' }} cm</small>
+                    </div>
+                </div>
+                <a href="/logout" class="btn btn-danger-custom">Cerrar Sesión</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+
+        <!-- CHAT -->
+        <div class="chat-dialog">
+            <div class="chat-header">
+                💬 Asistente Nutrimental
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot">
+                    <div class="message-bubble">
+                        👋 Hola, escribe un alimento para analizarlo.
+                    </div>
+                    <span class="message-time" id="welcomeTime"></span>
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <div class="input-group-custom">
+                    <input type="text" id="foodInput" placeholder="Ej. Pizza, Manzana...">
+                    <button id="btnEnviar">Enviar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- HISTORIAL -->
+        <div class="card-custom mt-4">
+            <h4 class="mb-3">📜 Historial</h4>
+            <div class="table-responsive">
+                <table class="table table-custom">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Alimento</th>
+                            <th>Carbs</th>
+                            <th>Proteínas</th>
+                            <th>Grasas</th>
+                            <th>Sodio</th>
+                            <th>Riesgo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historialBody">
+                        {% for item in history %}
+                        <tr>
+                            <td>{{ item.fecha_consumo or item.fecha }}</td>
+                            <td>{{ item.nombre }}</td>
+                            <td>{{ item.carbohidratos_porcion }} g</td>
+                            <td>{{ item.proteinas_porcion }} g</td>
+                            <td>{{ item.grasas_porcion }} g</td>
+                            <td>{{ item.sodio_porcion }} mg</td>
+                            <td>
+                                <span class="
+                                    {% if item.nivel_riesgo == 'Alto' %}riesgo-alto
+                                    {% elif item.nivel_riesgo == 'Medio' %}riesgo-medio
+                                    {% else %}riesgo-bajo{% endif %}
+                                ">
+                                    {{ item.nivel_riesgo }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- GRÁFICAS con datos REALES del historial -->
+        <div class="card-custom">
+            <h4 class="mb-4">📊 Tendencias</h4>
+            <div class="row g-4">
+                <div class="col-md-5">
+                    <div class="chart-title">Distribución de Calorías por Macronutriente</div>
+                    <div class="chart-container">
+                        <canvas id="macroChart"></canvas>
+                    </div>
+                    <div id="macroSummary" class="macro-summary"></div>
+                </div>
+                <div class="col-md-7">
+                    <div class="chart-title">Consumo en el tiempo</div>
+                    <div class="chart-container">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                    <div id="trendSummary" class="trend-summary"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales para las gráficas
+        let macroChart, trendChart;
+        
+        // Datos del historial desde el backend
+        const historyData = {{ history_json | safe }};
+        
+        // Función para actualizar ambas gráficas con los datos del historial
+        function updateCharts() {
+            // Calcular calorías totales por macronutriente
+            let carbsCalories = 0;
+            let proteinsCalories = 0;
+            let fatsCalories = 0;
+            
+            historyData.forEach(item => {
+                carbsCalories += Number(item.carbohidratos_porcion) * 4;
+                proteinsCalories += Number(item.proteinas_porcion) * 4;
+                fatsCalories += Number(item.grasas_porcion) * 9;
+            });
+            
+            const totalCalories = carbsCalories + proteinsCalories + fatsCalories;
+            
+            let carbsPercent = 0, proteinsPercent = 0, fatsPercent = 0;
+            if (totalCalories > 0) {
+                carbsPercent = ((carbsCalories / totalCalories) * 100).toFixed(1);
+                proteinsPercent = ((proteinsCalories / totalCalories) * 100).toFixed(1);
+                fatsPercent = ((fatsCalories / totalCalories) * 100).toFixed(1);
+            }
+            
+            // Actualizar gráfica de pastel
+            if (macroChart) {
+                macroChart.data.datasets[0].data = [fatsCalories, proteinsCalories, carbsCalories];
+                macroChart.update();
+            } else {
+                const macroCtx = document.getElementById('macroChart');
+                macroChart = new Chart(macroCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Grasas', 'Proteínas', 'Carbohidratos'],
+                        datasets: [{
+                            data: [fatsCalories, proteinsCalories, carbsCalories],
+                            backgroundColor: ['#3b82f6', '#10b981', '#f59e0b']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: { 
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.raw;
+                                        const percentage = ((value / totalCalories) * 100).toFixed(1);
+                                        return `${label}: ${percentage}% (${value} kcal)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Actualizar leyenda de la gráfica de pastel
+            document.getElementById("macroSummary").innerHTML = `
+                <div class="legend-container">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #f59e0b;"></div>
+                        <span class="legend-label">Carbohidratos</span>
+                        <span class="legend-value">${carbsPercent}%</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #10b981;"></div>
+                        <span class="legend-label">Proteínas</span>
+                        <span class="legend-value">${proteinsPercent}%</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #3b82f6;"></div>
+                        <span class="legend-label">Grasas</span>
+                        <span class="legend-value">${fatsPercent}%</span>
+                    </div>
+                </div>
+            `;
+            
+            // Preparar datos para gráfica de líneas
+            const labels = historyData.map(item => item.fecha_consumo || item.fecha);
+            const carbsData = historyData.map(item => Number(item.carbohidratos_porcion));
+            const proteinsData = historyData.map(item => Number(item.proteinas_porcion));
+            const fatsData = historyData.map(item => Number(item.grasas_porcion));
+            
+            // Calcular promedios
+            const avgCarbs = carbsData.length ? (carbsData.reduce((a, b) => a + b, 0) / carbsData.length).toFixed(1) : 0;
+            const avgProteins = proteinsData.length ? (proteinsData.reduce((a, b) => a + b, 0) / proteinsData.length).toFixed(1) : 0;
+            const avgFats = fatsData.length ? (fatsData.reduce((a, b) => a + b, 0) / fatsData.length).toFixed(1) : 0;
+            
+            // Actualizar gráfica de líneas
+            if (trendChart) {
+                trendChart.data.labels = labels;
+                trendChart.data.datasets[0].data = carbsData;
+                trendChart.data.datasets[1].data = proteinsData;
+                trendChart.data.datasets[2].data = fatsData;
+                trendChart.update();
+            } else {
+                const trendCtx = document.getElementById('trendChart');
+                trendChart = new Chart(trendCtx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            { 
+                                label: 'Carbohidratos (g)', 
+                                data: carbsData, 
+                                borderColor: '#f59e0b', 
+                                backgroundColor: 'transparent', 
+                                borderWidth: 2,
+                                tension: 0.4,
+                                pointBackgroundColor: '#f59e0b',
+                                pointBorderColor: '#ffffff',
+                                pointBorderWidth: 2,
+                                pointRadius: 4
+                            },
+                            { 
+                                label: 'Proteínas (g)', 
+                                data: proteinsData, 
+                                borderColor: '#10b981', 
+                                backgroundColor: 'transparent',
+                                borderWidth: 2,
+                                tension: 0.4,
+                                pointBackgroundColor: '#10b981',
+                                pointBorderColor: '#ffffff',
+                                pointBorderWidth: 2,
+                                pointRadius: 4
+                            },
+                            { 
+                                label: 'Grasas (g)', 
+                                data: fatsData, 
+                                borderColor: '#3b82f6', 
+                                backgroundColor: 'transparent',
+                                borderWidth: 2,
+                                tension: 0.4,
+                                pointBackgroundColor: '#3b82f6',
+                                pointBorderColor: '#ffffff',
+                                pointBorderWidth: 2,
+                                pointRadius: 4
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: { 
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.dataset.label}: ${context.raw} g`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: { 
+                                ticks: { color: '#f1f5f9' }, 
+                                grid: { color: '#334155' },
+                                title: { display: true, text: 'Fecha', color: '#94a3b8' }
+                            },
+                            y: { 
+                                ticks: { color: '#f1f5f9' }, 
+                                grid: { color: '#334155' },
+                                title: { display: true, text: 'Gramos', color: '#94a3b8' },
+                                min: 0
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Actualizar leyenda de la gráfica de líneas
+            document.getElementById("trendSummary").innerHTML = `
+                <div class="legend-container">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #f59e0b;"></div>
+                        <span class="legend-label">Carbohidratos</span>
+                        <span class="legend-value">(promedio: ${avgCarbs} g)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #10b981;"></div>
+                        <span class="legend-label">Proteínas</span>
+                        <span class="legend-value">(promedio: ${avgProteins} g)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #3b82f6;"></div>
+                        <span class="legend-label">Grasas</span>
+                        <span class="legend-value">(promedio: ${avgFats} g)</span>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // ============================================
+        // FUNCIONALIDAD DEL CHAT
+        // ============================================
+        
+        const chatMessages = document.getElementById('chatMessages');
+        const foodInput = document.getElementById('foodInput');
+        const btnEnviar = document.getElementById('btnEnviar');
+        const historialBody = document.getElementById('historialBody');
+        
+        document.getElementById("welcomeTime").textContent = new Date().toLocaleTimeString('es-MX', {
+            hour: '2-digit', minute: '2-digit'
+        });
+        
+        function addUserMessage(text) {
+            const div = document.createElement('div');
+            div.className = 'message user';
+            div.innerHTML = `<div class="message-bubble">🍽️ ${text}</div>
+                            <span class="message-time">${new Date().toLocaleTimeString()}</span>`;
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function addBotMessage(html) {
+            const div = document.createElement('div');
+            div.className = 'message bot';
+            div.innerHTML = `<div class="message-bubble">${html}</div>
+                            <span class="message-time">${new Date().toLocaleTimeString()}</span>`;
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        async function enviarAlimento() {
+            const food = foodInput.value.trim();
+            if (!food) {
+                Swal.fire({ icon: 'warning', title: 'Escribe un alimento' });
+                return;
+            }
+            addUserMessage(food);
+            foodInput.value = '';
+            addBotMessage('⏳ Analizando...');
+            
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ food: food })
+                });
+                const data = await response.json();
+                const mensajes = document.querySelectorAll('.message.bot');
+                mensajes[mensajes.length - 1].remove();
+                
+                if (data.success) {
+                    const analysis = data.analysis;
+                    let riesgoClass = analysis.riesgo === 'Alto' ? 'riesgo-alto' : 
+                                     (analysis.riesgo === 'Medio' ? 'riesgo-medio' : 'riesgo-bajo');
+                    const safeText = analysis.recomendacion.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                    addBotMessage(`<strong class="${riesgoClass}">Riesgo: ${analysis.riesgo}</strong>
+                                  <div class="recomendacion-card">${safeText}</div>`);
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td>${new Date().toISOString().split('T')[0]}</td>
+                                     <td>${food}</td>
+                                     <td>${analysis.carbohidratos} g</td>
+                                     <td>${analysis.proteinas} g</td>
+                                     <td>${analysis.grasas} g</td>
+                                     <td>${analysis.sodio} mg</td>
+                                     <td><span class="${riesgoClass}">${analysis.riesgo}</span></td>`;
+                    historialBody.prepend(row);
+                    
+                    // Agregar el nuevo alimento al historyData
+                    historyData.unshift({
+                        fecha_consumo: new Date().toISOString().split('T')[0],
+                        nombre: food,
+                        carbohidratos_porcion: analysis.carbohidratos,
+                        proteinas_porcion: analysis.proteinas,
+                        grasas_porcion: analysis.grasas,
+                        sodio_porcion: analysis.sodio,
+                        nivel_riesgo: analysis.riesgo
+                    });
+                    
+                    // Actualizar gráficas con los nuevos datos
+                    updateCharts();
+                } else {
+                    addBotMessage(`❌ ${data.message}`);
+                }
+            } catch (error) {
+                addBotMessage(`❌ Error de conexión. Asegúrate de que el backend Flask esté corriendo.`);
+            }
+        }
+        
+        btnEnviar.addEventListener('click', enviarAlimento);
+        foodInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') enviarAlimento(); });
+        
+        // Inicializar gráficas al cargar la página
+        updateCharts();
+    </script>
+</body>
+
+</html>
