@@ -1,53 +1,76 @@
+# 🩺 MediByte
+
+> **Asistencia nutricional inteligente y accesible para personas con diabetes tipo 2.**
+> *MediByte no sustituye a un médico o nutriólogo; funciona como una herramienta de acompañamiento educativo.*
+
+---
+
 ## Inspiración
 
-MediByte nació al observar que muchas personas con diabetes tipo 2 tienen dificultades para interpretar la información nutrimental de los alimentos que consumen diariamente. Aunque existen aplicaciones para contar calorías o registrar comidas, muchas veces estas herramientas no explican de manera sencilla cómo ciertos alimentos pueden afectar el control de glucosa.
+Muchas personas con diabetes tipo 2 enfrentan una barrera diaria: **interpretar la información nutrimental de lo que consumen**. Aunque existen aplicaciones para contar calorías, la mayoría no explica de manera sencilla cómo ciertos alimentos afectan el control de la glucosa.
 
-Creamos una solución accesible, clara y educativa que ayudara a las personas a tomar mejores decisiones alimentarias. La idea principal fue desarrollar un agente de inteligencia artificial capaz de traducir información nutrimental compleja en recomendaciones fáciles de entender, especialmente en temas como carbohidratos, azúcares, grasas, sodio e impacto glucémico.
+**MediByte** nace para llenar ese vacío. Creamos una solución clara y educativa para ayudar a las personas a tomar mejores decisiones alimentarias, traduciendo información nutricional compleja en recomendaciones fáciles de entender, especialmente en:
+* Carbohidratos y azúcares.
+* Grasas y sodio.
+* Impacto glucémico.
+
+---
 
 ## ¿Qué hace?
 
-MediByte es un agente de inteligencia artificial de asistencia nutricional para personas con diabetes tipo 2. El usuario puede escribir los alimentos que consumió, por ejemplo: “Comí una torta de jamón y tomé un refresco”, y el agente genera una interpretación clara sobre el posible impacto nutrimental de esa comida.
+MediByte es un **agente de inteligencia artificial** que actúa como un escudo educativo en la alimentación diaria:
 
-El sistema puede emitir advertencias sobre consumo elevado de carbohidratos, azúcares, grasas o sodio, además de sugerir alternativas más adecuadas. También contempla el registro de un historial alimentario para identificar tendencias de consumo y apoyar al usuario en el seguimiento de sus hábitos.
+* **Interpretación Natural:** El usuario escribe lo que comió (ej. *“Comí una torta de jamón y tomé un refresco”*) y el agente analiza el posible impacto nutrimental de la comida.
+* **Alertas Inteligentes:** Emite advertencias sobre el consumo elevado de componentes críticos y sugiere alternativas más adecuadas.
+* **Historial Alimentario:** Registra las comidas para identificar tendencias de consumo y apoyar al usuario en el seguimiento de sus hábitos a largo plazo.
 
-MediByte no sustituye a un médico o nutriólogo, sino que funciona como una herramienta de acompañamiento educativo para facilitar la comprensión de la información nutrimental.
+---
 
 ## ¿Cómo lo construimos?
 
-Construimos MediByte utilizando Microsoft Copilot Studio, una plataforma que permite desarrollar agentes conversacionales de inteligencia artificial de forma visual y con bajo código.
+Diseñamos una arquitectura donde el usuario interactúa con una interfaz web o aplicación, conectada directamente al núcleo de IA.
 
-El agente se apoya en una base de conocimiento construida a partir de información validada por instituciones públicas y organizaciones especializadas en diabetes, como la Federación Mexicana de Diabetes. Esta base permite que las respuestas sean más contextualizadas, confiables y útiles para personas con diabetes tipo 2.
+### Tecnologías utilizadas:
+* **Microsoft Copilot Studio:** Plataforma principal para el desarrollo visual y *low-code* del agente conversacional.
+* **Base de Conocimiento Validada:** El agente consulta fuentes oficiales y especializadas, como la **Federación Mexicana de Diabetes**, asegurando respuestas confiables, contextualizadas y seguras.
 
-También diseñamos una arquitectura donde el usuario interactúa con una interfaz web o aplicación, ingresa sus alimentos por texto, el agente interpreta la información y posteriormente genera advertencias, recomendaciones y registros dentro del historial alimentario.
+---
 
 ## Retos a los que nos enfrentamos
 
-Uno de los principales retos fue definir correctamente el enfoque del agente. Al inicio, la idea podía interpretarse como si el modelo hubiera sido entrenado directamente con documentos, pero después ajustamos el enfoque para explicarlo de forma más correcta: MediByte no se entrena desde cero, sino que consulta una base de conocimiento validada para generar respuestas más confiables.
+* **Definición del Enfoque de IA:** Ajustar la arquitectura para aclarar que MediByte **no se entrena desde cero**, sino que realiza consultas dinámicas (RAG) sobre una base de conocimiento validada para evitar alucinaciones.
+* **Traducción de Lenguaje Técnico:** Transformar conceptos complejos de índice glucémico y conteo de carbohidratos en mensajes simples, empáticos y digeribles.
+* **Ética y Responsabilidad:** Cuidar rigurosamente que las recomendaciones mantengan un tono de **orientación educativa** y nunca suenen como un diagnóstico médico.
+* **Gestión de Flujos:** Diseñar una lógica conversacional que no solo responda preguntas, sino que guarde información y detecte patrones de consumo de forma lógica.
 
-Otro reto fue convertir información técnica sobre nutrición, diabetes, índice glucémico y conteo de carbohidratos en mensajes simples que cualquier usuario pudiera entender. También fue importante cuidar que las recomendaciones no sonaran como diagnóstico médico, sino como orientación educativa.
-
-Además, tuvimos que pensar en cómo organizar el flujo del sistema para que no solo respondiera preguntas, sino que también pudiera guardar información del usuario y detectar patrones de consumo.
+---
 
 ## Logros de los que estamos orgullosos
 
-Estamos orgullosas de haber desarrollado una propuesta con impacto social, enfocada en una problemática real: la dificultad de muchas personas para interpretar alimentos y tomar decisiones informadas cuando viven con diabetes tipo 2.
+* **Impacto Social Real:** Desarrollar una propuesta enfocada en una problemática crítica de salud pública.
+* **Más allá de las Calorías:** Lograr un agente que interpreta el *contexto* de los alimentos en lugar de solo mostrar números.
+* **Ecosistema Integrado:** Combinar con éxito IA conversacional, educación alimentaria, historial de consumo y recomendaciones personalizadas en una sola solución.
 
-También logramos construir un agente que no se limita a contar calorías, sino que interpreta la información nutrimental en lenguaje sencillo. Otro logro importante fue integrar una base de conocimiento validada, lo cual permite que las respuestas estén mejor orientadas y no dependan únicamente de información general.
-
-Además, MediByte combina inteligencia artificial conversacional, educación alimentaria, historial de consumo y recomendaciones personalizadas en una sola solución.
+---
 
 ## Lo que aprendimos
 
-Durante el desarrollo aprendimos que una solución de salud digital debe ser clara, responsable y segura. No basta con generar respuestas automáticas; es necesario cuidar el lenguaje, aclarar las limitaciones del sistema y evitar que el usuario interprete las recomendaciones como un diagnóstico médico.
+* **Responsabilidad en HealthTech:** Una solución de salud digital debe ser clara, segura y muy consciente de sus limitaciones. El diseño siempre debe tener un enfoque humano y preventivo.
+* **Curación de Datos:** La importancia crítica de respaldar las respuestas de la IA únicamente en fuentes institucionales verificadas cuando se trata de la salud de las personas.
 
-También aprendimos la importancia de usar fuentes confiables, especialmente cuando se trabaja con temas relacionados con salud. Además, comprendimos mejor cómo una herramienta de inteligencia artificial puede apoyar la educación del paciente si se diseña con un enfoque humano, accesible y preventivo.
+---
 
-## Que sigue para MediByte
+## ¿Qué sigue para MediByte?
 
-Como siguientes pasos, nos gustaría mejorar el prototipo integrando una base de datos nutrimental más amplia y verificada, para estimar con mayor precisión valores como carbohidratos, azúcares, grasas y sodio.
+* **Ampliación de Datos:** Integrar una base de datos nutrimental más robusta para estimar con mayor precisión matemática los valores de carbohidratos, grasas y azúcares.
+* **Reportes Médicos:** Fortalecer el historial alimentario para generar reportes exportables que el usuario pueda compartir con su profesional de la salud.
+* **UI/UX Accesible:** Diseñar una interfaz más intuitiva, visual y accesible para adultos mayores o personas con debilidad visual.
 
-También buscamos fortalecer el historial alimentario para que el usuario pueda visualizar tendencias de consumo a lo largo del tiempo. A futuro, el sistema podría generar reportes de seguimiento que el usuario pueda compartir con un profesional de la salud.
-
-Otra mejora importante sería ampliar la interfaz para hacerla más intuitiva, visual y accesible, permitiendo que más personas puedan usar MediByte como apoyo en su educación alimentaria diaria.
+---
 
 ## Integrantes
+
+* 👩‍💻 **María Fernanda Carmona Guerrero** — [@mophead09](https://github.com/mophead09)
+* 👩‍💻 **Fatima Cruz Mota** — [@fatimacruz21](https://github.com/fatimacruz21)
+* 👨‍💻 **Héctor David González Tetuán** — [@AnotherPlayer](https://github.com/AnotherPlayer)
+* 👨‍💻 **Jan Isaac Hurtado Rosas** — [@isaac-hurtado](https://github.com/isaac-hurtado)
