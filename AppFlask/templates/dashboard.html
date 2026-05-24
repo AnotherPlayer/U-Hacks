@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Asistente Nutrimental</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: white;
+        }
+
+        .navbar-custom {
+            background-color: #1e293b;
+            padding: 15px;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .card-custom {
+            background-color: #1e293b;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-control,
+        .form-select {
+            background-color: #334155;
+            border: none;
+            color: white;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background-color: #334155;
+            color: white;
+            box-shadow: none;
+            border: 1px solid #3b82f6;
+        }
+
+        .btn-primary-custom {
+            background-color: #2563eb;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: bold;
+        }
+
+        .btn-primary-custom:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-danger-custom {
+            background-color: #dc2626;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+        }
+
+        .btn-danger-custom:hover {
+            background-color: #b91c1c;
+        }
+
+        .riesgo-alto {
+            color: #ef4444;
+            font-weight: bold;
+        }
+
+        .riesgo-medio {
+            color: #f59e0b;
+            font-weight: bold;
+        }
+
+        .riesgo-bajo {
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .table-custom {
+            background-color: #1e293b;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .table-custom th {
+            background-color: #334155;
+            color: white;
+            border: none;
+        }
+
+        .table-custom td {
+            color: white;
+            border-color: #334155;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #3b82f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar-custom">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="avatar">👤</div>
+                    <div>
+                        <h5 class="mb-0">{{ profile.nombre if profile else 'Paciente' }}</h5>
+                        <small class="text-secondary">{{ profile.edad if profile else '?' }} años | 
+                               {{ profile.peso_kg if profile else '?' }} kg | 
+                               {{ profile.altura_cm if profile else '?' }} cm</small>
+                    </div>
+                </div>
+                <a href="/logout" class="btn btn-danger-custom">Cerrar Sesión</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Formulario para analizar alimento -->
+        <div class="card-custom">
+            <h4 class="mb-3">🍽️ ¿Qué comiste hoy?</h4>
+            <form id="foodForm">
+                <div class="row">
+                    <div class="col-md-8 mb-3">
+                        <input type="text" id="foodInput" name="food" class="form-control" 
+                               placeholder="Ej. Manzana, Pollo a la plancha, Ensalada..." required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <button type="submit" id="btnAnalizar" class="btn btn-primary-custom w-100">
+                            Analizar Alimento
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Resultado del análisis -->
+        {% if analysis %}
+        <div class="card-custom" id="analysisResult">
+            <h4 class="mb-3">📊 Análisis Nutricional</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Alimento:</strong> {{ alimento_analizado }}</p>
+                    <p><strong>Carbohidratos:</strong> {{ analysis.carbohidratos }} g</p>
+                    <p><strong>Proteínas:</strong> {{ analysis.proteinas }} g</p>
+                    <p><strong>Grasas:</strong> {{ analysis.grasas }} g</p>
+                    <p><strong>Sodio:</strong> {{ analysis.sodio }} mg</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Riesgo:</strong> 
+                        <span class="
+                            {% if analysis.riesgo == 'Alto' %}riesgo-alto
+                            {% elif analysis.riesgo == 'Medio' %}riesgo-medio
+                            {% else %}riesgo-bajo{% endif %}
+                        ">
+                            {{ analysis.riesgo }}
+                        </span>
+                    </p>
+                    <p><strong>Recomendación:</strong> {{ analysis.recomendacion }}</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Historial de consumos -->
+        <div class="card-custom">
+            <h4 class="mb-3">📜 Historial de Alimentos</h4>
+            {% if history %}
+            <div class="table-responsive">
+                <table class="table table-custom">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Alimento</th>
+                            <th>Carbohidratos</th>
+                            <th>Proteínas</th>
+                            <th>Grasas</th>
+                            <th>Sodio</th>
+                            <th>Riesgo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in history %}
+                        <tr>
+                            <td>{{ item.fecha_consumo or item.fecha }}</td>
+                            <td>{{ item.nombre }}</td>
+                            <td>{{ item.carbohidratos_porcion }} g</td>
+                            <td>{{ item.proteinas_porcion }} g</td>
+                            <td>{{ item.grasas_porcion }} g</td>
+                            <td>{{ item.sodio_porcion }} mg</td>
+                            <td>
+                                <span class="
+                                    {% if item.nivel_riesgo == 'Alto' %}riesgo-alto
+                                    {% elif item.nivel_riesgo == 'Medio' %}riesgo-medio
+                                    {% else %}riesgo-bajo{% endif %}
+                                ">
+                                    {{ item.nivel_riesgo }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-center text-secondary">No hay alimentos registrados aún.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("foodForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            
+            const foodInput = document.getElementById("foodInput");
+            const food = foodInput.value.trim();
+            
+            if (!food) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Por favor ingresa un alimento para analizar",
+                    confirmButtonText: "Aceptar"
+                });
+                return;
+            }
+            
+            if (food.length > 100) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "El nombre del alimento no debe superar 100 caracteres",
+                    confirmButtonText: "Aceptar"
+                });
+                return;
+            }
+            
+            // Mostrar loading
+            Swal.fire({
+                title: "Analizando...",
+                text: "Estamos analizando el alimento con IA",
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            try {
+                const response = await fetch("/api/analyze", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ food: food })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "¡Análisis completado!",
+                        text: "El alimento ha sido registrado correctamente",
+                        confirmButtonText: "Aceptar"
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: data.message,
+                        confirmButtonText: "Intentar de nuevo"
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error de conexión",
+                    text: "No se pudo conectar con el servidor",
+                    confirmButtonText: "Intentar de nuevo"
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
